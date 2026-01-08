@@ -5,6 +5,7 @@ import { User } from "../models/user.model.js"
 // import { Video } from "../models/video.model.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 
 const generateAccessAndRefreshToken = async(userId) => {
@@ -445,13 +446,14 @@ const getUserChannelProfile = asyncHandler( async (req, res) => {
             $project: {
                 fullName: 1,
                 username: 1,
-                avartar: 1,
+                avatar: 1,
                 coverImage: 1,
                 email: 1,
                 createdAt: 1,
                 subscribersCount: 1,
                 channelsSubscribedToCount: 1,
                 isSubscribed: 1,
+                _id: 0,
             }
         }
     ])
@@ -459,8 +461,6 @@ const getUserChannelProfile = asyncHandler( async (req, res) => {
     if(!userChannelProfile?.length){
         throw new ApiError(400, "Channel does not exist")
     }
-
-    console.log(userChannelProfile)
 
     return res
     .status(200)
@@ -475,7 +475,7 @@ const getUserChannelProfile = asyncHandler( async (req, res) => {
 
 
 const getUserWatchHistory = asyncHandler( async (req, res) => {
-    const user = User.aggregate([
+    const user = await User.aggregate([
         {
             $match: {
                 _id: new mongoose.Types.ObjectId(req.user?._id)
