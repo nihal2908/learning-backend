@@ -10,6 +10,8 @@ import
     updateUserDetails, 
     updateUserAvatar, 
     updateUserCoverImage, 
+    getUserChannelProfile,
+    getUserWatchHistory,
 } 
 from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js"
@@ -42,18 +44,22 @@ router.route("/change-password").post(verifyJWT, upload.none(), changePassword)
 
 router.route("/me").get(verifyJWT, getCurrentUser)
 
-router.route("/update").post(verifyJWT, upload.none(), updateUserDetails)
+router.route("/update").patch(verifyJWT, upload.none(), updateUserDetails)
 
-router.route("/update-avatar").post(
+router.route("/update-avatar").patch(
     verifyJWT,
     upload.single("avatar"),
     updateUserAvatar,
 )
 
-router.route("/update-cover-image").post(
+router.route("/update-cover-image").patch(
     verifyJWT,
     upload.single("coverImage"),
     updateUserCoverImage,
 )
+
+router.route("/channel/:username").get(verifyJWT, getUserChannelProfile)
+
+router.route("/history").get(verifyJWT, getUserWatchHistory)
 
 export default router;
